@@ -8,6 +8,7 @@ export default function Main() {
   const canvasRef = useRef(null),
         canvasContainerRef = useRef(null),
         downloadRef = useRef(null),
+        dragableTextRef = useRef(null),
         [text, setText] = useState(""),
         [isImageLoaded, setImageLoaded] = useState(false)
       
@@ -41,6 +42,18 @@ export default function Main() {
       context.drawImage(img,0,0, wImg, hImg, 0,0, wImg*ratio, hImg*ratio)
 
     }
+  }
+
+  function handleMouseUp(){}
+  
+  function handleMouseDown(){}
+  
+  function enlargeText(e){
+    dragableTextRef.current.style.fontSize = `${e.target.value}px`
+  }
+
+  function setTextOpacity(e){
+    dragableTextRef.current.style.opacity = e.target.value/100
   }
 
   function handleTextChange(e){
@@ -78,10 +91,10 @@ export default function Main() {
           <option value="middle">Tengah</option>
           <option value="bottom">Bawah</option>
         </select> */}
-        <p>Enlarge</p>
-        <input id="opacity" name="opacity-range" type="range" min="0" max="100" className="border"></input>
+        <p>Enlarge text</p>
+        <input id="enlarge-text" name="enlarge-text" type="range" min="0" max="54" className="border" onChange={enlargeText}></input>
         <p>Opacity/Transparency</p>
-        <input id="opacity" name="opacity-range" type="range" min="0" max="100" className="border"></input>
+        <input id="opacity" name="opacity-range" type="range" min="0" max="100" className="border" onChange={setTextOpacity}></input>
         
         {/* <p>Rotate</p> */}
         <div className="flex flex-row gap-2">
@@ -96,7 +109,7 @@ export default function Main() {
       <div className="col-span-3">
       <div ref={canvasContainerRef} className="flex justify-center w-full h-[36rem] shadow-lg pb-full rounded-xl bg-white static">
         <div id="download-ref" ref={downloadRef}> 
-          <p id="draggable-text" className="absolute">{text}</p>
+          <p id="draggable-text" ref={dragableTextRef} className="absolute">{text}</p>
           <canvas id="canvas"  ref={canvasRef}></canvas>
         </div>
        </div>
