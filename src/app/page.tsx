@@ -1,6 +1,6 @@
 'use client'
 
-import { useState,  useRef } from "react"
+import { useState,  useRef, useEffect } from "react"
 import html2canvas from "html2canvas"
 
 
@@ -10,7 +10,9 @@ export default function Main() {
         downloadRef = useRef(null),
         dragableTextRef = useRef(null),
         [text, setText] = useState(""),
-        [isImageLoaded, setImageLoaded] = useState(false)
+        [isImageLoaded, setImageLoaded] = useState(false),
+        [offSet,setOffset] = useState([0,0]),
+        [isSetToMove, setToMove] = useState(false)
       
   function drawCanvas(e){
     setText("")
@@ -44,10 +46,31 @@ export default function Main() {
     }
   }
 
-  function handleMouseUp(){}
+  function handleMouseUp(e){
+    setToMove(false)
+  }
+
+  function handleMouseMove(e){
+    if(isSetToMove){
+      let mousePosition = {
+        x : e.clientX,
+        y: e.clientY
+      }
+
+      dragableTextRef.current.style.left = `${mousePosition.x - offSet[0]}px`
+      dragableTextRef.current.style.top = `${mousePosition.y - offSet[1]}px`
+    }
+  }
   
-  function handleMouseDown(){}
-  
+  function handleMouseDown(e){
+    let currentPosition = dragableTextRef.current.getBoundingClientRect()
+    let currentLeft = e.clientX - currentPosition.left
+    let currentTop = e.clientY - currentPosition.top
+    setOffset([currentLeft , currentTop])
+    setToMove(true)
+  } 
+
+
   function enlargeText(e){
     dragableTextRef.current.style.fontSize = `${e.target.value}px`
   }
@@ -92,7 +115,7 @@ export default function Main() {
           <option value="bottom">Bawah</option>
         </select> */}
         <p>Enlarge text</p>
-        <input id="enlarge-text" name="enlarge-text" type="range" min="0" max="54" className="border" onChange={enlargeText}></input>
+        <input id="enlarge-text" name="enlarge-text" type="range" min="0" max="100" className="border" onChange={enlargeText}></input>
         <p>Opacity/Transparency</p>
         <input id="opacity" name="opacity-range" type="range" min="0" max="100" className="border" onChange={setTextOpacity}></input>
         
@@ -109,8 +132,10 @@ export default function Main() {
       <div className="col-span-3">
       <div ref={canvasContainerRef} className="flex justify-center w-full h-[36rem] shadow-lg pb-full rounded-xl bg-white static">
         <div id="download-ref" ref={downloadRef}> 
-          <p id="draggable-text" ref={dragableTextRef} className="absolute">{text}</p>
-          <canvas id="canvas"  ref={canvasRef}></canvas>
+          <div id="text-wrapper">
+          <p id="draggable-text" ref={dragableTextRef} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} className="absolute">{text}</p>
+          </div>
+         <canvas id="canvas"  ref={canvasRef}></canvas>
         </div>
        </div>
       </div>
