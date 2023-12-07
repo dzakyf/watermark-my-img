@@ -68,6 +68,7 @@ export default function Main() {
     let currentTop = e.clientY - currentPosition.top
     setOffset([currentLeft , currentTop])
     setToMove(true)
+    console.dir(dragableTextRef.current)
   } 
 
 
@@ -82,6 +83,18 @@ export default function Main() {
   function handleTextChange(e){
     setText(e.target.value)
   }
+
+  function handleColorChange(e){
+    dragableTextRef.current.style.color = e.target.value
+  }
+
+  // TBD: get current rotation on text and use it later 
+  // let currentDegree = 0
+  // function handleRotateText(e){
+  //   currentDegree += parseInt(e.target.dataset.angle)
+  //   console.log(dragableTextRef.current.style.transform)
+
+  // }
 
   function handleDownload(){
     let fileName = "res"
@@ -98,47 +111,41 @@ export default function Main() {
   return (
     <main className="grid min-h-screen">
       <div className="grid grid-cols-4 gap-4 p-36">
-      <div className="col-span-1">
-       <div className="w-full h-[36rem] shadow-lg pb-full rounded-xl bg-white">
-        <div className="flex flex-col p-12 gap-2">
-        {isImageLoaded && 
-        <button className="border" onClick={handleDownload}>Download</button>
-        }
-        <input id="open-file" type="file" accept="image/png, image/jpeg" onChange={drawCanvas}></input>
-        <p>Input</p>
-        <textarea id="input-text" onChange={handleTextChange} className="border"></textarea>
-        {/* <p>Position</p>
-        <select name="position" id="position-select" className="border">
-          <option value="">--Please choose an option--</option>
-          <option value="top">Atas</option>
-          <option value="middle">Tengah</option>
-          <option value="bottom">Bawah</option>
-        </select> */}
-        <p>Enlarge text</p>
-        <input id="enlarge-text" name="enlarge-text" type="range" min="0" max="100" className="border" onChange={enlargeText}></input>
-        <p>Opacity/Transparency</p>
-        <input id="opacity" name="opacity-range" type="range" min="0" max="100" className="border" onChange={setTextOpacity}></input>
-        
-        {/* <p>Rotate</p> */}
-        <div className="flex flex-row gap-2">
-        {/* <button className="border rounded-full p-1">90 CCW</button>
-        <button className="border rounded-full p-1">90 CW</button>
-        <button className="border rounded-full p-1">45 CCW</button>
-        <button className="border rounded-full p-1">45 CW</button> */}
-        </div>
-       </div>
-       </div>
-      </div>
-      <div className="col-span-3">
-      <div ref={canvasContainerRef} className="flex justify-center w-full h-[36rem] shadow-lg pb-full rounded-xl bg-white static">
-        <div id="download-ref" ref={downloadRef}> 
-          <div id="text-wrapper">
-          <p id="draggable-text" ref={dragableTextRef} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} className="absolute">{text}</p>
+        <div className="col-span-3">
+          <div ref={canvasContainerRef} className="flex justify-center w-full h-[36rem] shadow-lg pb-full rounded-xl bg-white static ">
+            <div id="download-ref" ref={downloadRef}> 
+              <p id="draggable-text" ref={dragableTextRef} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} className="absolute cursor-default ">{text}</p>
+              <canvas id="canvas"  ref={canvasRef}></canvas>
+            </div>
           </div>
-         <canvas id="canvas"  ref={canvasRef}></canvas>
         </div>
-       </div>
-      </div>
+        <div className="col-span-1">
+          <div className="w-full h-[36rem] shadow-lg pb-full rounded-xl bg-white">
+            <div className="flex flex-col p-8 gap-2">
+            {isImageLoaded && 
+            <button className="border" onClick={handleDownload}>Download</button>
+            }
+            <input id="open-file" type="file" accept="image/png, image/jpeg" onChange={drawCanvas}></input>
+            <p>Input</p>
+            <div className="flex gap-2">
+              <textarea id="input-text" onChange={handleTextChange} className="border flex-auto"></textarea> 
+              <input type="color" className="border" onChange={handleColorChange}></input>
+            </div>
+            <p>Text Size</p>
+            <input id="enlarge-text" name="enlarge-text" type="range" min="0" max="100" className="border" onChange={enlargeText}></input>
+            <p>Opacity/Transparency</p>
+            <input id="opacity" name="opacity-range" type="range" min="0" max="100" step="10" className="border" onChange={setTextOpacity}></input>
+            
+            {/* <p>Rotate</p> */}
+            {/* <div className="flex flex-row gap-2">
+            <button id="rotate-90-ccw"className="border rounded-full p-1 hover:bg-gray-200" data-angle="-90" onClick={handleRotateText}>90 CCW</button>
+            <button id="rotate-90-cw" className="border rounded-full p-1 hover:bg-gray-200" data-angle="90" onClick={handleRotateText}>90 CW</button>
+            <button className="border rounded-full p-1 hover:bg-gray-200" data-angle="45">45 CCW</button>
+            <button className="border rounded-full p-1 hover:bg-gray-200" data-angle="-45">45 CW</button>
+            </div> */}
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   )
