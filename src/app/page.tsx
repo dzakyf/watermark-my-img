@@ -1,40 +1,40 @@
 'use client'
 
-import { useState,  useRef, useEffect } from "react"
+import { useState,  useRef, MutableRefObject } from "react"
 import html2canvas from "html2canvas"
 
 
 export default function Main() {
-  const canvasRef = useRef(null),
-        canvasContainerRef = useRef(null),
-        downloadRef = useRef(null),
-        dragableTextRef = useRef(null),
-        [text, setText] = useState(""),
-        [isImageLoaded, setImageLoaded] = useState(false),
-        [offSet,setOffset] = useState([0,0]),
-        [isSetToMove, setToMove] = useState(false)
+  const canvasRef = useRef<HTMLCanvasElement>(null),
+        canvasContainerRef = useRef<HTMLDivElement>(null),
+        downloadRef = useRef<HTMLDivElement>(null) as MutableRefObject<HTMLDivElement>,
+        dragableTextRef = useRef<HTMLParagraphElement>(null) as MutableRefObject<HTMLParagraphElement>,
+        [text, setText] = useState<string>(""),
+        [isImageLoaded, setImageLoaded] = useState<boolean>(false),
+        [offSet,setOffset] = useState<Array<number>>([0,0]),
+        [isSetToMove, setToMove] = useState<boolean>(false)
       
-  function drawCanvas(e){
+  function drawCanvas(e : any){
     setText("")
     setImageLoaded(true)
-    const file = e.target.files[0],
-          fileSrc = URL.createObjectURL(file),
-          canvas = canvasRef.current,
-          context = canvas.getContext('2d'),
-          container = canvasContainerRef.current,
-          img = new Image()
+    const file : File = e.target.files[0],
+          fileSrc : string = URL.createObjectURL(file),
+          canvas : any = canvasRef.current,
+          context : any = canvas.getContext('2d'),
+          container : any = canvasContainerRef.current,
+          img : HTMLImageElement = new Image()
     
     img.src = fileSrc 
     img.onload = function (){
-      const hImg = img.height,
-            wImg = img.width,
-            wContainer = container.offsetWidth,
-            hContainer = container.offsetHeight
+      const hImg : number = img.height,
+            wImg : number = img.width,
+            wContainer : number = container.offsetWidth,
+            hContainer : number = container.offsetHeight
 
       //get ratio canvas:img, this will be used 
       //for calculating image and container width so that it 
       //will fit to container 
-      let ratio = Math.min((hContainer/hImg),(wContainer/wImg))
+      let ratio : number = Math.min((hContainer/hImg),(wContainer/wImg))
 
       // resize canvas based on ratio   
       canvas.height = hContainer
@@ -46,11 +46,11 @@ export default function Main() {
     }
   }
 
-  function handleMouseUp(e){
+  function handleMouseUp(){
     setToMove(false)
   }
 
-  function handleMouseMove(e){
+  function handleMouseMove(e : React.MouseEvent<HTMLInputElement, MouseEvent>){
     if(isSetToMove){
       let mousePosition = {
         x : e.clientX,
@@ -62,29 +62,28 @@ export default function Main() {
     }
   }
   
-  function handleMouseDown(e){
-    let currentPosition = dragableTextRef.current.getBoundingClientRect()
-    let currentLeft = e.clientX - currentPosition.left
-    let currentTop = e.clientY - currentPosition.top
+  function handleMouseDown(e : React.MouseEvent<HTMLInputElement, MouseEvent>){
+    let currentPosition : DOMRect = dragableTextRef.current.getBoundingClientRect()
+    let currentLeft : number = e.clientX - currentPosition.left
+    let currentTop : number = e.clientY - currentPosition.top
     setOffset([currentLeft , currentTop])
     setToMove(true)
-    console.dir(dragableTextRef.current)
   } 
 
 
-  function enlargeText(e){
+  function enlargeText(e: React.ChangeEvent<HTMLInputElement>){
     dragableTextRef.current.style.fontSize = `${e.target.value}px`
   }
 
-  function setTextOpacity(e){
-    dragableTextRef.current.style.opacity = e.target.value/100
+  function setTextOpacity(e: React.ChangeEvent<HTMLInputElement>){
+    dragableTextRef.current.style.opacity = `${Number(e.target.value)/100}`
   }
 
-  function handleTextChange(e){
+  function handleTextChange(e: any){
     setText(e.target.value)
   }
 
-  function handleColorChange(e){
+  function handleColorChange(e: React.ChangeEvent<HTMLInputElement>){
     dragableTextRef.current.style.color = e.target.value
   }
 
@@ -114,7 +113,7 @@ export default function Main() {
         <div className="col-span-3">
           <div ref={canvasContainerRef} className="flex justify-center w-full h-[36rem] shadow-lg pb-full rounded-xl bg-white static ">
             <div id="download-ref" ref={downloadRef}> 
-              <p id="draggable-text" ref={dragableTextRef} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} className="absolute cursor-default ">{text}</p>
+              <p id="draggable-text" ref={dragableTextRef} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} className="absolute cursor-default whitespace-normal break-words">{text}</p>
               <canvas id="canvas"  ref={canvasRef}></canvas>
             </div>
           </div>
