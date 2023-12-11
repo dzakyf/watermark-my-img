@@ -50,9 +50,9 @@ export default function Main() {
     setToMove(false)
   }
 
-  function handleMouseMove(e : React.MouseEvent<HTMLInputElement, MouseEvent>){
+  function handleMouseMove(e : React.MouseEvent<HTMLParagraphElement, MouseEvent>){
     if(isSetToMove){
-      let mousePosition = {
+      let mousePosition : {x: number, y:number} = {
         x : e.clientX,
         y: e.clientY
       }
@@ -62,7 +62,7 @@ export default function Main() {
     }
   }
   
-  function handleMouseDown(e : React.MouseEvent<HTMLInputElement, MouseEvent>){
+  function handleMouseDown(e : React.MouseEvent<HTMLParagraphElement, MouseEvent>){
     let currentPosition : DOMRect = dragableTextRef.current.getBoundingClientRect()
     let currentLeft : number = e.clientX - currentPosition.left
     let currentTop : number = e.clientY - currentPosition.top
@@ -96,10 +96,10 @@ export default function Main() {
   // }
 
   function handleDownload(){
-    let fileName = "res"
+    let fileName : string = "res"
 
     html2canvas(downloadRef.current).then(function(canvas){
-      const downloadLink = document.createElement('a')
+      const downloadLink : HTMLAnchorElement= document.createElement('a')
       downloadLink.download = fileName
       downloadLink.href = canvas.toDataURL("image/png;base64") 
       downloadLink.click()
@@ -108,17 +108,17 @@ export default function Main() {
 
 
   return (
-    <main className="grid min-h-screen">
-      <div className="grid grid-cols-4 gap-4 p-36">
-        <div className="col-span-3">
-          <div ref={canvasContainerRef} className="flex justify-center w-full h-[36rem] shadow-lg pb-full rounded-xl bg-white static ">
+    <main className="sm:grid lg:flex min-h-screen lg:justify-center">
+      <div className="sm:grid sm:grid-cols-1 lg:flex lg:justify-center gap-4 lg:p-36">
+        <div className="sm:grid-cols-1 sm:px-2 lg:w-[42rem]">
+          <div ref={canvasContainerRef} className="flex justify-center  w-full h-[36rem] shadow-lg pb-full rounded-xl bg-white static ">
             <div id="download-ref" ref={downloadRef}> 
               <p id="draggable-text" ref={dragableTextRef} onMouseUp={handleMouseUp} onMouseMove={handleMouseMove} onMouseDown={handleMouseDown} className="absolute cursor-default whitespace-normal break-words">{text}</p>
               <canvas id="canvas"  ref={canvasRef}></canvas>
             </div>
           </div>
         </div>
-        <div className="col-span-1">
+        <div className="sm:grid-cols-1 sm:px-2">
           <div className="w-full h-[36rem] shadow-lg pb-full rounded-xl bg-white">
             <div className="flex flex-col p-8 gap-2">
             {isImageLoaded && 
